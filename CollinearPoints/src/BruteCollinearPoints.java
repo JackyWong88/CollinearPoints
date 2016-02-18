@@ -1,3 +1,8 @@
+
+import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.StdDraw;
+import edu.princeton.cs.algs4.StdOut;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -15,22 +20,22 @@ public class BruteCollinearPoints {
 
     public BruteCollinearPoints(Point[] points) {   // finds all line segments containing 4 points
         count = 0;
-        segments = new LineSegment[2];
+        segments = new LineSegment[1];
         if (points == null) {
             throw new java.lang.NullPointerException();
         }
         for (int p = 0; p < points.length; p++) {
-            for (int q = p; q < points.length; q++) {
+            for (int q = p + 1; q < points.length; q++) {
                 if (points[p].compareTo(points[q]) == 0) throw new java.lang.IllegalArgumentException();
                 double slope1 = points[p].slopeTo(points[q]);
-                for (int r = q; r < points.length; r++) {
+                for (int r = q + 1; r < points.length; r++) {
                     if (points[q].compareTo(points[r]) == 0) throw new java.lang.IllegalArgumentException();
                     double slope2 = points[p].slopeTo(points[r]);
-                    if (slope1 != slope2) break;
-                    for (int s = r; s < points.length; s++) {
+                    if (slope1 != slope2) continue;
+                    for (int s = r + 1; s < points.length; s++) {
                         if (points[r].compareTo(points[s]) == 0) throw new java.lang.IllegalArgumentException();
                         double slope3 = points[p].slopeTo(points[s]);
-                        if(slope1 != slope3) break;
+                        if(slope1 != slope3) continue;
                         else {
                             Point[] ps = {points[p],points[q],points[r],points[s]};
                             Point[] endpoints = ends(ps);
@@ -92,5 +97,33 @@ public class BruteCollinearPoints {
         }
         Point[] ends = {low, high};
         return ends;
+    }
+    
+    public static void main(String[] args) {
+        // read the N points from a file
+        In in = new In(args[0]);
+        int N = in.readInt();
+        Point[] points = new Point[N];
+        for (int i = 0; i < N; i++) {
+            int x = in.readInt();
+            int y = in.readInt();
+            points[i] = new Point(x, y);
+        }
+
+        // draw the points
+        StdDraw.show(0);
+        StdDraw.setXscale(0, 32768);
+        StdDraw.setYscale(0, 32768);
+        for (Point p : points) {
+            p.draw();
+        }
+        StdDraw.show();
+
+        // print and draw the line segments
+        BruteCollinearPoints collinear = new BruteCollinearPoints(points);
+        for (LineSegment segment : collinear.segments()) {
+            StdOut.println(segment);
+            segment.draw();
+        }
     }
 }
