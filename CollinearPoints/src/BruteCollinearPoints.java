@@ -16,37 +16,62 @@ import edu.princeton.cs.algs4.StdOut;
 public class BruteCollinearPoints {
 
     private LineSegment[] segments;
+    private Point[] endpoints;
     private int count;
 
     public BruteCollinearPoints(Point[] points) {   // finds all line segments containing 4 points
+        if (points.length == 0) throw new java.lang.NullPointerException();
+        if (points == null) throw new java.lang.NullPointerException();
         count = 0;
-        segments = new LineSegment[1];
-        if (points == null) {
-            throw new java.lang.NullPointerException();
-        }
-        for (int p = 0; p < points.length; p++) {
-            for (int q = p + 1; q < points.length; q++) {
+        segments = new LineSegment[2];
+        endpoints = new Point[4];
+        for (int p = 0; p < points.length-3; p++) {
+            if (points[p] == null) throw new java.lang.NullPointerException();
+            for (int q = p + 1; q < points.length-2; q++) {
+                if (points[q] == null) throw new java.lang.NullPointerException();
                 if (points[p].compareTo(points[q]) == 0) throw new java.lang.IllegalArgumentException();
                 double slope1 = points[p].slopeTo(points[q]);
-                for (int r = q + 1; r < points.length; r++) {
+                for (int r = q + 1; r < points.length-1; r++) {
+                    if (points[r] == null) throw new java.lang.NullPointerException();
                     if (points[q].compareTo(points[r]) == 0) throw new java.lang.IllegalArgumentException();
                     double slope2 = points[p].slopeTo(points[r]);
                     if (slope1 != slope2) continue;
                     for (int s = r + 1; s < points.length; s++) {
+                        if (points[s] == null) throw new java.lang.NullPointerException();
                         if (points[r].compareTo(points[s]) == 0) throw new java.lang.IllegalArgumentException();
                         double slope3 = points[p].slopeTo(points[s]);
-                        if(slope1 != slope3) continue;
-                        else {
+                        if(slope1 == slope3) {
                             Point[] ps = {points[p],points[q],points[r],points[s]};
-                            Point[] endpoints = ends(ps);
-                            if (count == segments.length) {
-                                resize(2 * segments.length);    // double size of array if necessary
+                            //StdOut.println(points[p].toString().concat(",").concat(points[q].toString()).concat(",").concat(points[r].toString()).concat(",").concat(points[s].toString()));
+                            Point[] ends = ends(ps);
+                            boolean addPoint = true;
+                            for (int i = 0; i < count; i++) {
+                                if (endpoints[2*i].compareTo(ends[0]) == 0 && endpoints[2*i+1].compareTo(ends[1]) == 0) {
+                                    addPoint = false;
+                                    break;
+                                }
                             }
-                            segments[count++] = new LineSegment(endpoints[0],endpoints[1]);
+                            if (addPoint) {
+                                if (count*2 == endpoints.length) {
+                                    resize(4 * endpoints.length);    // quadruple size of array if necessary
+                                }
+                                endpoints[2*count] = ends[0];
+                                endpoints[2*count+1] = ends[1];
+    //                            StdOut.println(ends[0]);
+    //                            StdOut.println(endpoints[2*count]);
+    //                            StdOut.println(ends[1]);
+    //                            StdOut.println(endpoints[2*count+1]);
+                                count++;
+    //                            StdOut.println(count);
+                            }
                         }
                     }
                 }
             }
+        }
+        segments = new LineSegment[count];
+        for (int i = 0; i < count; i++) {
+            segments[i] = new LineSegment(endpoints[2*i],endpoints[2*i+1]);
         }
     }
 
@@ -60,12 +85,12 @@ public class BruteCollinearPoints {
     
     // resize the underlying array holding the elements
     private void resize(int capacity) {
-        assert capacity >= count;
-        LineSegment[] temp = new LineSegment[capacity];
-        for (int i = 0; i < count; i++) {
-            temp[i] = segments[i];
+        assert capacity >= count*2;
+        Point[] temp = new Point[capacity];
+        for (int i = 0; i < count*2; i++) {
+            temp[i] = endpoints[i];
         }
-        segments = temp;
+        endpoints = temp;
     }
     
     private Point[] ends(Point[] ps) {
