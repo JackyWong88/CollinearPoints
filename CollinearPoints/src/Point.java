@@ -102,8 +102,10 @@ public class Point implements Comparable<Point> {
     private class ComparePoints implements Comparator<Point> {
         
         public int compare(Point a, Point b) {
-            if (slopeTo(a) > slopeTo(b)) return 1;
-            else if (slopeTo(a) < slopeTo(b)) return -1;
+            double slopeA = slopeTo(a);
+            double slopeB = slopeTo(b);
+            if (slopeA > slopeB) return 1;
+            else if (slopeA < slopeB) return -1;
             else return 0;
         }
     }

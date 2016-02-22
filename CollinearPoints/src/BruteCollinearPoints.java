@@ -23,7 +23,6 @@ public class BruteCollinearPoints {
         if (points.length == 0) throw new java.lang.NullPointerException();
         if (points == null) throw new java.lang.NullPointerException();
         count = 0;
-        segments = new LineSegment[2];
         endpoints = new Point[4];
         for (int p = 0; p < points.length-3; p++) {
             if (points[p] == null) throw new java.lang.NullPointerException();
