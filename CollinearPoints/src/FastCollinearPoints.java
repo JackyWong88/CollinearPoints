@@ -8,7 +8,7 @@ import java.util.*;
  * @author Jacky
  */
 public class FastCollinearPoints {
-    private LineSegment[] segments;
+    private static LineSegment[] segments;
     private Point[] endpoints;
     private int count;
     
@@ -34,12 +34,12 @@ public class FastCollinearPoints {
 //                StdOut.println(points[i].slopeTo(point));
                 double slope = points[i].slopeTo(point);
                 if (slope != tempslope || j == N - 1) {
-//                    StdOut.println(pointcount);
+                    //StdOut.println(pointcount);
                     if (pointcount >= 3) {
                         //check if it's already in there
                         boolean addPoint = true;
                         for (int k = 0; k < count; k++) {
-                            if (endpoints[k*2].slopeTo(endpoints[k*2+1]) == tempslope) {
+                            if (endpoints[k*2].compareTo(points[i]) == 0 || endpoints[k*2+1].compareTo(sortedcopy[j-1]) == 0 || endpoints[k*2].compareTo(sortedcopy[j-1]) == 0 || endpoints[k*2+1].compareTo(points[i]) == 0 && endpoints[k*2].slopeTo(endpoints[k*2+1]) == tempslope) {
                                 addPoint = false;
                                 break;
                             }

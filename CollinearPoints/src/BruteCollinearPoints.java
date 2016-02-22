@@ -2,6 +2,7 @@
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdOut;
+import java.util.Arrays;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -15,13 +16,14 @@ import edu.princeton.cs.algs4.StdOut;
  */
 public class BruteCollinearPoints {
 
-    private LineSegment[] segments;
+    private static LineSegment[] segments;
     private Point[] endpoints;
     private int count;
 
     public BruteCollinearPoints(Point[] points) {   // finds all line segments containing 4 points
         if (points.length == 0) throw new java.lang.NullPointerException();
         if (points == null) throw new java.lang.NullPointerException();
+        Arrays.sort(points);
         count = 0;
         endpoints = new Point[4];
         for (int p = 0; p < points.length-3; p++) {
