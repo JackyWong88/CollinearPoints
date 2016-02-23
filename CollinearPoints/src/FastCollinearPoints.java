@@ -1,3 +1,4 @@
+
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdOut;
@@ -8,10 +9,11 @@ import java.util.*;
  * @author Jacky
  */
 public class FastCollinearPoints {
-    private static LineSegment[] segments;
+
+    private LineSegment[] segments;
     private Point[] endpoints;
     private int count;
-    
+
     public FastCollinearPoints(Point[] points) {    // finds all line segments containing 4 or more points
         if (points.length == 0) throw new java.lang.NullPointerException();
         if (points == null) throw new java.lang.NullPointerException();
@@ -21,35 +23,35 @@ public class FastCollinearPoints {
         Arrays.sort(points);
         for (int i = 0; i < N; i++) {
             if (points[i] == null) throw new java.lang.NullPointerException();
-            //if (isInSegments(points[i])) continue;
             Point[] sortedcopy = copy(points);
             Comparator<Point> p = points[i].slopeOrder();
-            Arrays.sort(sortedcopy,p);
+            Arrays.sort(sortedcopy, p);
 //            StdOut.println("Sorting" + points[i]);
             double tempslope = Double.NaN;
             int pointcount = 0;
-            for ( int j = 0; j < N; j++ ) {
+            for (int j = 1; j < N; j++) {
                 Point point = sortedcopy[j];
+                if (point.compareTo(points[i]) == 0) throw new java.lang.NullPointerException();
 //                StdOut.println(point);
 //                StdOut.println(points[i].slopeTo(point));
                 double slope = points[i].slopeTo(point);
                 if (slope != tempslope || j == N - 1) {
-                    //StdOut.println(pointcount);
+//                    StdOut.println(pointcount);
                     if (pointcount >= 3) {
                         //check if it's already in there
                         boolean addPoint = true;
-                        for (int k = 0; k < count; k++) {
-                            if (endpoints[k*2].compareTo(points[i]) == 0 || endpoints[k*2+1].compareTo(sortedcopy[j-1]) == 0 || endpoints[k*2].compareTo(sortedcopy[j-1]) == 0 || endpoints[k*2+1].compareTo(points[i]) == 0 && endpoints[k*2].slopeTo(endpoints[k*2+1]) == tempslope) {
+                        for (int k = 0; k < pointcount; k++) {
+                            if (points[i].compareTo(sortedcopy[j - k - 1]) == 1) {
                                 addPoint = false;
                                 break;
                             }
                         }
                         if (addPoint) {
-                            if (count*2 == endpoints.length) {
+                            if (count * 2 == endpoints.length) {
                                 resize(4 * endpoints.length);    // quadruple size of array if necessary
                             }
-                            endpoints[count*2] = points[i];
-                            endpoints[count*2+1] = sortedcopy[j-1];
+                            endpoints[count * 2] = points[i];
+                            endpoints[count * 2 + 1] = sortedcopy[j - 1];
                             count++;
                         }
                     }
@@ -62,31 +64,29 @@ public class FastCollinearPoints {
         }
         segments = new LineSegment[count];
         for (int i = 0; i < count; i++) {
-            segments[i] = new LineSegment(endpoints[2*i],endpoints[2*i+1]);
+            segments[i] = new LineSegment(endpoints[2 * i], endpoints[2 * i + 1]);
         }
     }
-    public int numberOfSegments(){        // the number of line segments
-       return count;
+
+    public int numberOfSegments() {        // the number of line segments
+        return count;
     }
+
     public LineSegment[] segments() {               // the line segments
-       return segments;
+        return segments;
     }
-    
-    private static boolean isInSegments(Point p) {
-        return false;
-    }
-    
+
     // resize the underlying array holding the elements
     private void resize(int capacity) {
-        assert capacity >= count*2;
+        assert capacity >= count * 2;
         Point[] temp = new Point[capacity];
-        for (int i = 0; i < count*2; i++) {
+        for (int i = 0; i < count * 2; i++) {
             temp[i] = endpoints[i];
         }
         endpoints = temp;
     }
-    
-    private static Point[] copy(Point[] points){
+
+    private static Point[] copy(Point[] points) {
         int N = points.length;
         Point[] newpoints = new Point[N];
         for (int i = 0; i < N; i++) {
@@ -94,7 +94,7 @@ public class FastCollinearPoints {
         }
         return newpoints;
     }
-    
+
     public static void main(String[] args) {
         // read the N points from a file
         In in = new In(args[0]);

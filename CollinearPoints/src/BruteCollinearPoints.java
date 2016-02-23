@@ -9,14 +9,13 @@ import java.util.Arrays;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author Jacky
  */
 public class BruteCollinearPoints {
 
-    private static LineSegment[] segments;
+    private LineSegment[] segments;
     private Point[] endpoints;
     private int count;
 
@@ -26,13 +25,13 @@ public class BruteCollinearPoints {
         Arrays.sort(points);
         count = 0;
         endpoints = new Point[4];
-        for (int p = 0; p < points.length-3; p++) {
+        for (int p = 0; p < points.length - 3; p++) {
             if (points[p] == null) throw new java.lang.NullPointerException();
-            for (int q = p + 1; q < points.length-2; q++) {
+            for (int q = p + 1; q < points.length - 2; q++) {
                 if (points[q] == null) throw new java.lang.NullPointerException();
                 if (points[p].compareTo(points[q]) == 0) throw new java.lang.IllegalArgumentException();
                 double slope1 = points[p].slopeTo(points[q]);
-                for (int r = q + 1; r < points.length-1; r++) {
+                for (int r = q + 1; r < points.length - 1; r++) {
                     if (points[r] == null) throw new java.lang.NullPointerException();
                     if (points[q].compareTo(points[r]) == 0) throw new java.lang.IllegalArgumentException();
                     double slope2 = points[p].slopeTo(points[r]);
@@ -41,29 +40,29 @@ public class BruteCollinearPoints {
                         if (points[s] == null) throw new java.lang.NullPointerException();
                         if (points[r].compareTo(points[s]) == 0) throw new java.lang.IllegalArgumentException();
                         double slope3 = points[p].slopeTo(points[s]);
-                        if(slope1 == slope3) {
-                            Point[] ps = {points[p],points[q],points[r],points[s]};
+                        if (slope1 == slope3) {
+                            Point[] ps = {points[p], points[q], points[r], points[s]};
                             //StdOut.println(points[p].toString().concat(",").concat(points[q].toString()).concat(",").concat(points[r].toString()).concat(",").concat(points[s].toString()));
                             Point[] ends = ends(ps);
                             boolean addPoint = true;
                             for (int i = 0; i < count; i++) {
-                                if (endpoints[2*i].compareTo(ends[0]) == 0 && endpoints[2*i+1].compareTo(ends[1]) == 0) {
+                                if (endpoints[2 * i].compareTo(ends[0]) == 0 && endpoints[2 * i + 1].compareTo(ends[1]) == 0) {
                                     addPoint = false;
                                     break;
                                 }
                             }
                             if (addPoint) {
-                                if (count*2 == endpoints.length) {
+                                if (count * 2 == endpoints.length) {
                                     resize(4 * endpoints.length);    // quadruple size of array if necessary
                                 }
-                                endpoints[2*count] = ends[0];
-                                endpoints[2*count+1] = ends[1];
-    //                            StdOut.println(ends[0]);
-    //                            StdOut.println(endpoints[2*count]);
-    //                            StdOut.println(ends[1]);
-    //                            StdOut.println(endpoints[2*count+1]);
+                                endpoints[2 * count] = ends[0];
+                                endpoints[2 * count + 1] = ends[1];
+                                //                            StdOut.println(ends[0]);
+                                //                            StdOut.println(endpoints[2*count]);
+                                //                            StdOut.println(ends[1]);
+                                //                            StdOut.println(endpoints[2*count+1]);
                                 count++;
-    //                            StdOut.println(count);
+                                //                            StdOut.println(count);
                             }
                         }
                     }
@@ -72,7 +71,7 @@ public class BruteCollinearPoints {
         }
         segments = new LineSegment[count];
         for (int i = 0; i < count; i++) {
-            segments[i] = new LineSegment(endpoints[2*i],endpoints[2*i+1]);
+            segments[i] = new LineSegment(endpoints[2 * i], endpoints[2 * i + 1]);
         }
     }
 
@@ -83,17 +82,17 @@ public class BruteCollinearPoints {
     public LineSegment[] segments() {               // the line segments
         return segments;
     }
-    
+
     // resize the underlying array holding the elements
     private void resize(int capacity) {
-        assert capacity >= count*2;
+        assert capacity >= count * 2;
         Point[] temp = new Point[capacity];
-        for (int i = 0; i < count*2; i++) {
+        for (int i = 0; i < count * 2; i++) {
             temp[i] = endpoints[i];
         }
         endpoints = temp;
     }
-    
+
     private Point[] ends(Point[] ps) {
         Point high1, high2, low1, low2, low, high;
         if (ps.length != 4) throw new java.lang.IllegalArgumentException();
@@ -107,7 +106,7 @@ public class BruteCollinearPoints {
         if (ps[2].compareTo(ps[3]) == 1) {
             high2 = ps[2];
             low2 = ps[3];
-        }  else {
+        } else {
             high2 = ps[3];
             low2 = ps[2];
         }
@@ -124,7 +123,7 @@ public class BruteCollinearPoints {
         Point[] ends = {low, high};
         return ends;
     }
-    
+
     public static void main(String[] args) {
         // read the N points from a file
         In in = new In(args[0]);
