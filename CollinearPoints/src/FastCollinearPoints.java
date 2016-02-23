@@ -2,7 +2,8 @@
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdOut;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
 
 /**
  *
@@ -10,13 +11,14 @@ import java.util.*;
  */
 public class FastCollinearPoints {
 
-    private LineSegment[] segments;
+    private final LineSegment[] segments;
     private Point[] endpoints;
     private int count;
 
-    public FastCollinearPoints(Point[] points) {    // finds all line segments containing 4 or more points
-        if (points.length == 0) throw new java.lang.NullPointerException();
-        if (points == null) throw new java.lang.NullPointerException();
+    public FastCollinearPoints(Point[] inpoints) {    // finds all line segments containing 4 or more points
+        if (inpoints.length == 0) throw new java.lang.NullPointerException();
+        if (inpoints == null) throw new java.lang.NullPointerException();
+        Point[] points = copy(inpoints);
         int N = points.length;
         count = 0;
         endpoints = new Point[4];
@@ -31,17 +33,17 @@ public class FastCollinearPoints {
             int pointcount = 0;
             for (int j = 1; j < N; j++) {
                 Point point = sortedcopy[j];
-                if (point.compareTo(points[i]) == 0) throw new java.lang.NullPointerException();
+                if (point.compareTo(points[i]) == 0) throw new java.lang.IllegalArgumentException();
 //                StdOut.println(point);
 //                StdOut.println(points[i].slopeTo(point));
                 double slope = points[i].slopeTo(point);
-                if (slope != tempslope || j == N - 1) {
+                if (slope != tempslope) {
 //                    StdOut.println(pointcount);
                     if (pointcount >= 3) {
                         //check if it's already in there
                         boolean addPoint = true;
                         for (int k = 0; k < pointcount; k++) {
-                            if (points[i].compareTo(sortedcopy[j - k - 1]) == 1) {
+                            if (points[i].compareTo(sortedcopy[j - k - 1]) > 0) {
                                 addPoint = false;
                                 break;
                             }
@@ -52,6 +54,28 @@ public class FastCollinearPoints {
                             }
                             endpoints[count * 2] = points[i];
                             endpoints[count * 2 + 1] = sortedcopy[j - 1];
+                            count++;
+                        }
+                    }
+                    tempslope = slope;
+                    pointcount = 1;
+                } else if (j == N - 1) {
+//                    StdOut.println(pointcount);
+                    if (j == N - 1 && pointcount >= 2) {
+                        //check if it's already in there
+                        boolean addPoint = true;
+                        for (int k = 0; k <= pointcount; k++) {
+                            if (points[i].compareTo(sortedcopy[j - k]) > 0) {
+                                addPoint = false;
+                                break;
+                            }
+                        }
+                        if (addPoint) {
+                            if (count * 2 == endpoints.length) {
+                                resize(4 * endpoints.length);    // quadruple size of array if necessary
+                            }
+                            endpoints[count * 2] = points[i];
+                            endpoints[count * 2 + 1] = sortedcopy[j];
                             count++;
                         }
                     }
@@ -73,7 +97,7 @@ public class FastCollinearPoints {
     }
 
     public LineSegment[] segments() {               // the line segments
-        return segments;
+        return segments.clone();
     }
 
     // resize the underlying array holding the elements

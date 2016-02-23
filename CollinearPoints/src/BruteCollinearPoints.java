@@ -15,23 +15,25 @@ import java.util.Arrays;
  */
 public class BruteCollinearPoints {
 
-    private LineSegment[] segments;
+    private final LineSegment[] segments;
     private Point[] endpoints;
     private int count;
 
-    public BruteCollinearPoints(Point[] points) {   // finds all line segments containing 4 points
-        if (points.length == 0) throw new java.lang.NullPointerException();
-        if (points == null) throw new java.lang.NullPointerException();
+    public BruteCollinearPoints(Point[] inpoints) {   // finds all line segments containing 4 points
+        if (inpoints.length == 0) throw new java.lang.NullPointerException();
+        if (inpoints == null) throw new java.lang.NullPointerException();
+        Point[] points = copy(inpoints);
         Arrays.sort(points);
         count = 0;
         endpoints = new Point[4];
-        for (int p = 0; p < points.length - 3; p++) {
+        for (int p = 0; p < points.length - 1; p++) {
             if (points[p] == null) throw new java.lang.NullPointerException();
-            for (int q = p + 1; q < points.length - 2; q++) {
+            for (int q = p + 1; q < points.length; q++) {
                 if (points[q] == null) throw new java.lang.NullPointerException();
                 if (points[p].compareTo(points[q]) == 0) throw new java.lang.IllegalArgumentException();
+//                StdOut.println(points[p].toString().concat(" and ").concat(points[q].toString()));
                 double slope1 = points[p].slopeTo(points[q]);
-                for (int r = q + 1; r < points.length - 1; r++) {
+                for (int r = q + 1; r < points.length; r++) {
                     if (points[r] == null) throw new java.lang.NullPointerException();
                     if (points[q].compareTo(points[r]) == 0) throw new java.lang.IllegalArgumentException();
                     double slope2 = points[p].slopeTo(points[r]);
@@ -42,7 +44,8 @@ public class BruteCollinearPoints {
                         double slope3 = points[p].slopeTo(points[s]);
                         if (slope1 == slope3) {
                             Point[] ps = {points[p], points[q], points[r], points[s]};
-                            //StdOut.println(points[p].toString().concat(",").concat(points[q].toString()).concat(",").concat(points[r].toString()).concat(",").concat(points[s].toString()));
+                            /*StdOut.println(points[p].toString().concat(",").concat(points[q].toString()).
+                            concat(",").concat(points[r].toString()).concat(",").concat(points[s].toString()));*/
                             Point[] ends = ends(ps);
                             boolean addPoint = true;
                             for (int i = 0; i < count; i++) {
@@ -80,7 +83,7 @@ public class BruteCollinearPoints {
     }
 
     public LineSegment[] segments() {               // the line segments
-        return segments;
+        return segments.clone();
     }
 
     // resize the underlying array holding the elements
@@ -91,6 +94,15 @@ public class BruteCollinearPoints {
             temp[i] = endpoints[i];
         }
         endpoints = temp;
+    }
+    
+    private static Point[] copy(Point[] points) {
+        int N = points.length;
+        Point[] newpoints = new Point[N];
+        for (int i = 0; i < N; i++) {
+            newpoints[i] = points[i];
+        }
+        return newpoints;
     }
 
     private Point[] ends(Point[] ps) {
